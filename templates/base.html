@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{% block title %}Employee Dashboard{% endblock %}</title>
+<title>{% block title %}Employee Dashboard{% endblock %} · Infotech Limited</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
@@ -65,13 +65,13 @@ html:not(.dark) .theme-dark-icon { display: none; }
     </header>
     <div class="app-shell flex min-h-[calc(100vh-9rem)] flex-col overflow-hidden rounded-3xl sm:flex-row">
       <aside class="sidebar shrink-0 p-4 text-white sm:w-16 sm:p-2 lg:w-56 lg:p-5">
-        <a href="{{ url_for('index') }}" class="flex items-center gap-3 text-lg font-semibold tracking-tight sm:justify-center lg:justify-start">
+        <a href="{{ url_for('index') }}" class="flex items-center gap-3 whitespace-nowrap text-base font-semibold tracking-tight sm:justify-center lg:justify-start">
           <span class="grid h-9 w-9 place-items-center rounded-xl bg-white/15">{{ i.ic('grid', 'h-5 w-5') }}</span>
-          <span class="hidden lg:block">Fernwork HR</span>
+          <span class="hidden lg:block">Infotech Limited</span>
         </a>
-        <form action="{{ url_for('index') }}" class="mt-6 hidden items-center gap-2 rounded-xl bg-white/15 px-3 py-2.5 lg:flex">
-          {{ i.ic('search', 'h-4 w-4 shrink-0') }}
-          <input name="q" placeholder="Search employees" class="w-full bg-transparent text-sm text-white placeholder-white/65 focus:outline-none">
+        <form action="{{ url_for('index') }}" method="get" role="search" class="mt-6 hidden items-center gap-2 rounded-xl bg-white/15 px-3 py-2.5 lg:flex">
+          <input name="q" value="{{ request.args.get('q', '') }}" placeholder="Search employees" aria-label="Search employees" class="w-full bg-transparent text-sm text-white placeholder-white/65 focus:outline-none">
+          <button type="submit" aria-label="Search employees" title="Search employees" class="shrink-0 rounded-lg p-1 text-white/85 hover:text-white">{{ i.ic('search', 'h-4 w-4') }}</button>
         </form>
         <nav class="mt-5 grid grid-cols-2 gap-2 text-sm sm:flex sm:flex-col sm:items-center lg:items-stretch">
           <div class="label col-span-2 mb-1 px-3 text-white/60 sm:hidden lg:block">Workspace</div>
