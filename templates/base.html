@@ -1,0 +1,117 @@
+{% import "_icons.html" as i %}
+<!DOCTYPE html>
+<html lang="en" style="-webkit-font-smoothing:antialiased">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Employee Dashboard{% endblock %}</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { fontFamily: { sans: ['Inter', 'sans-serif'] },
+  extend: { colors: { bg: '#F4F5FA', fg: '#16172B', mute: '#6B6F85', line: '#E6E7F0', brand: '#7541E8', amber: '#F5A524', teal: '#22C3A6', rose: '#F0476B' } } } }
+if (localStorage.getItem('ems-theme') === 'dark') document.documentElement.classList.add('dark');
+</script>
+<style>
+html, body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+body { font-weight: 400; font-size: 14px; background: #edf0ff; color: #1b1b31; }
+.app-shell { background: #fff; box-shadow: 0 24px 70px rgba(49, 48, 105, .12); }
+.sidebar { background: linear-gradient(165deg, #8547f5 0%, #7139df 55%, #6533d2 100%); }
+.sidebar-link { color: rgba(255,255,255,.82); transition: background-color .18s ease, color .18s ease; }
+.sidebar-link:hover, .sidebar-link.active { background: rgba(255,255,255,.18); color: #fff; }
+.dashboard-card { border: 1px solid #eeeff7; box-shadow: 0 5px 18px rgba(30, 34, 79, .035); }
+.dashboard-card:hover { box-shadow: 0 9px 24px rgba(30, 34, 79, .08); }
+.theme-button { background: #fff; border: 1px solid #e6e8f4; color: #6840d8; box-shadow: 0 5px 18px rgba(30, 34, 79, .06); }
+.label { font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
+:focus-visible { outline: 2px solid #7541E8; outline-offset: 2px; }
+html.dark body { background: #111326; color: #f3f2ff; }
+html.dark .app-shell, html.dark .bg-white, html.dark .theme-button { background-color: #1b1e34 !important; color: #f3f2ff; }
+html.dark .bg-bg { background-color: #252943 !important; }
+html.dark .text-fg { color: #f3f2ff !important; }
+html.dark .text-mute { color: #a7abc4 !important; }
+html.dark .border-line, html.dark .dashboard-card { border-color: #353954 !important; }
+html.dark .dashboard-card { box-shadow: 0 5px 18px rgba(0, 0, 0, .12); }
+html.dark input, html.dark select { background-color: #252943; color: #f3f2ff; border-color: #353954; }
+html.dark input::placeholder { color: #a7abc4; }
+html.dark .hover\:bg-bg:hover { background-color: #252943 !important; }
+html.dark .hover\:bg-line:hover { background-color: #353954 !important; }
+html.dark .theme-light-icon { display: none; }
+html:not(.dark) .theme-dark-icon { display: none; }
+@media (min-width: 420px) and (max-width: 639px) {
+  .app-shell { flex-direction: row !important; }
+  .sidebar { width: 64px; padding: 8px; }
+  .sidebar > a { justify-content: center; }
+  .sidebar > a > span:last-child, .sidebar-link span, .sidebar nav .label { display: none; }
+  .sidebar nav { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .sidebar-link { justify-content: center; padding-left: 8px; padding-right: 8px; }
+  .app-shell > main { padding: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="min-h-screen px-3 py-5 sm:px-6 sm:py-7 lg:px-8">
+  <div class="mx-auto max-w-[1600px]">
+    <header class="mb-5 flex items-center justify-between gap-4 px-1">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight"><span class="text-brand">Employee</span> Dashboard</h1>
+        <p class="mt-1 text-sm text-mute">Available in light and dark mode</p>
+      </div>
+      <button id="theme-toggle" type="button" class="theme-button inline-flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition hover:-translate-y-0.5" aria-label="Toggle dark mode" aria-pressed="false">
+        <span class="theme-light-icon">{{ i.ic('sun', 'h-4 w-4') }}</span>
+        <span class="theme-dark-icon">{{ i.ic('moon', 'h-4 w-4') }}</span>
+        <span class="hidden sm:inline">Theme</span>
+      </button>
+    </header>
+    <div class="app-shell flex min-h-[calc(100vh-9rem)] flex-col overflow-hidden rounded-3xl sm:flex-row">
+      <aside class="sidebar shrink-0 p-4 text-white sm:w-16 sm:p-2 lg:w-56 lg:p-5">
+        <a href="{{ url_for('index') }}" class="flex items-center gap-3 text-lg font-semibold tracking-tight sm:justify-center lg:justify-start">
+          <span class="grid h-9 w-9 place-items-center rounded-xl bg-white/15">{{ i.ic('grid', 'h-5 w-5') }}</span>
+          <span class="hidden lg:block">Fernwork HR</span>
+        </a>
+        <form action="{{ url_for('index') }}" class="mt-6 hidden items-center gap-2 rounded-xl bg-white/15 px-3 py-2.5 lg:flex">
+          {{ i.ic('search', 'h-4 w-4 shrink-0') }}
+          <input name="q" placeholder="Search employees" class="w-full bg-transparent text-sm text-white placeholder-white/65 focus:outline-none">
+        </form>
+        <nav class="mt-5 grid grid-cols-2 gap-2 text-sm sm:flex sm:flex-col sm:items-center lg:items-stretch">
+          <div class="label col-span-2 mb-1 px-3 text-white/60 sm:hidden lg:block">Workspace</div>
+          <a href="{{ url_for('index') }}" aria-label="Overview" class="sidebar-link active flex items-center gap-3 rounded-xl px-3 py-2.5 sm:justify-center sm:px-2 lg:justify-start lg:px-3">
+            {{ i.ic('home', 'h-[18px] w-[18px] shrink-0') }}<span class="hidden lg:inline">Overview</span>
+          </a>
+          <a href="{{ url_for('index') }}#directory" aria-label="Employees" class="sidebar-link flex items-center gap-3 rounded-xl px-3 py-2.5 sm:justify-center sm:px-2 lg:justify-start lg:px-3">
+            {{ i.ic('users', 'h-[18px] w-[18px] shrink-0') }}<span class="hidden lg:inline">Employees</span>
+          </a>
+          <a href="{{ url_for('add') }}" aria-label="Add employee" class="sidebar-link flex items-center gap-3 rounded-xl px-3 py-2.5 sm:justify-center sm:px-2 lg:justify-start lg:px-3">
+            {{ i.ic('plus', 'h-[18px] w-[18px] shrink-0') }}<span class="hidden lg:inline">Add employee</span>
+          </a>
+          <a href="{{ url_for('export') }}" aria-label="Export CSV" class="sidebar-link flex items-center gap-3 rounded-xl px-3 py-2.5 sm:justify-center sm:px-2 lg:justify-start lg:px-3">
+            {{ i.ic('download', 'h-[18px] w-[18px] shrink-0') }}<span class="hidden lg:inline">Export CSV</span>
+          </a>
+        </nav>
+        <div class="mt-8 hidden rounded-2xl border border-white/15 bg-white/10 p-4 lg:block">
+          <div class="text-sm font-medium">People workspace</div>
+          <p class="mt-1 text-xs leading-5 text-white/70">Your team information, organized in one place.</p>
+        </div>
+      </aside>
+      <main class="min-w-0 flex-1 p-4 sm:p-6 lg:p-7">
+        <div class="space-y-5">
+          {% with msgs = get_flashed_messages(with_categories=true) %}{% for cat, m in msgs %}
+          <div class="rounded-xl px-4 py-3 text-sm {{ 'bg-rose/10 text-rose' if cat == 'error' else 'bg-teal/10 text-teal' }}">{{ m }}</div>
+          {% endfor %}{% endwith %}
+          {% block content %}{% endblock %}
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+<script>
+const themeToggle = document.getElementById('theme-toggle');
+themeToggle.addEventListener('click', () => {
+  const isDark = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('ems-theme', isDark ? 'dark' : 'light');
+  themeToggle.setAttribute('aria-pressed', String(isDark));
+});
+themeToggle.setAttribute('aria-pressed', String(document.documentElement.classList.contains('dark')));
+</script>
+</body>
+</html>
