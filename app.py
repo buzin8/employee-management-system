@@ -8,6 +8,14 @@ DB = os.environ.get("EMS_DB_PATH") or (
 )
 PER_PAGE = 8
 DEPARTMENTS = ["Engineering", "Design", "Operations", "Finance", "People", "Sales"]
+DESIGNATIONS = {
+    "Engineering": ["Backend Developer", "Frontend Developer", "Full Stack Developer", "Software Engineer", "DevOps Engineer", "Security Engineer", "QA Engineer"],
+    "Design": ["UI Designer", "UX Designer", "Product Designer", "Graphic Designer"],
+    "Operations": ["Network Administrator", "Operations Manager", "Operations Executive"],
+    "Finance": ["Accounts Analyst", "Accountant", "Financial Analyst", "Finance Manager"],
+    "People": ["HR Executive", "HR Manager", "Recruiter"],
+    "Sales": ["Sales Executive", "Sales Manager", "Account Executive"],
+}
 SORTS = {"name": "name", "salary": "salary DESC", "joined": "join_date DESC", "department": "department, name"}
 
 SCHEMA = """
@@ -69,10 +77,12 @@ def validate(form, emp_id=None):
         errors.append("Enter a valid email address.")
     if data["phone"] and not re.match(r"^[0-9+\-\s]{7,15}$", data["phone"]):
         errors.append("Phone can contain digits, +, - and spaces (7 to 15 characters).")
-    if not data["department"]:
+    if data["department"] not in DEPARTMENTS:
         errors.append("Choose a department.")
     if not data["designation"]:
-        errors.append("Enter a designation.")
+        errors.append("Choose a designation.")
+    elif emp_id is None and data["designation"] not in DESIGNATIONS.get(data["department"], []):
+        errors.append("Choose a designation for the selected department.")
     try:
         if float(data["salary"]) <= 0:
             raise ValueError
@@ -126,7 +136,7 @@ def add():
             return redirect(url_for("index"))
         for e in errors:
             flash(e, "error")
-    return render_template("form.html", e=data, departments=DEPARTMENTS, mode="Add")
+    return render_template("form.html", e=data, departments=DEPARTMENTS, designations=DESIGNATIONS, mode="Add")
 
 
 @app.route("/edit/<int:emp_id>", methods=["GET", "POST"])
@@ -145,7 +155,7 @@ def edit(emp_id):
             return redirect(url_for("index"))
         for e in errors:
             flash(e, "error")
-    return render_template("form.html", e=data, departments=DEPARTMENTS, mode="Edit")
+    return render_template("form.html", e=data, departments=DEPARTMENTS, designations=DESIGNATIONS, mode="Edit")
 
 
 @app.route("/delete/<int:emp_id>", methods=["POST"])

@@ -9,11 +9,36 @@
 <form method="post" class="dashboard-card bg-white rounded-2xl p-5 sm:p-6 grid md:grid-cols-2 gap-5 max-w-3xl">
   {{ field('name', 'Full name') }}{{ field('email', 'Email', 'email') }}{{ field('phone', 'Phone', 'tel', false) }}
   <label class="block"><span class="label text-mute">Department</span>
-    <select name="department" required class="mt-2 w-full border border-line rounded-xl px-4 py-3 bg-white"><option value="">Choose one</option>{% for d in departments %}<option {{ 'selected' if d == e.get('department') }}>{{ d }}</option>{% endfor %}</select></label>
-  {{ field('designation', 'Designation') }}{{ field('salary', 'Annual salary (₹)', 'number') }}{{ field('join_date', 'Join date', 'date') }}
+    <select name="department" id="department" required class="mt-2 w-full border border-line rounded-xl px-4 py-3 bg-white"><option value="">Choose one</option>{% for d in departments %}<option value="{{ d }}" {{ 'selected' if d == e.get('department') }}>{{ d }}</option>{% endfor %}</select></label>
+  {% if mode == 'Add' %}
+  <label class="block"><span class="label text-mute">Designation</span>
+    <select name="designation" id="designation" required class="mt-2 w-full border border-line rounded-xl px-4 py-3 bg-white">
+      <option value="">Choose a designation</option>
+      {% for designation in designations.get(e.get('department', ''), []) %}
+      <option value="{{ designation }}" {{ 'selected' if designation == e.get('designation') }}>{{ designation }}</option>
+      {% endfor %}
+    </select></label>
+  {% else %}
+  {{ field('designation', 'Designation') }}
+  {% endif %}
+  {{ field('salary', 'Annual salary (₹)', 'number') }}{{ field('join_date', 'Join date', 'date') }}
   <div class="md:col-span-2 flex items-center gap-6 pt-2">
     <button class="group label bg-brand text-white rounded-xl px-8 py-4 inline-flex items-center gap-2 hover:opacity-90 transition">Save employee <span class="transition-transform duration-300 group-hover:translate-x-1">{{ i.ic('arrow', 'w-4 h-4') }}</span></button>
     <a href="{{ url_for('index') }}" class="label text-mute hover:text-fg transition">Cancel</a>
   </div>
 </form>
+{% if mode == 'Add' %}
+<script>
+const departmentSelect = document.getElementById('department');
+const designationSelect = document.getElementById('designation');
+const designationsByDepartment = {{ designations|tojson }};
+
+departmentSelect.addEventListener('change', () => {
+  designationSelect.replaceChildren(new Option('Choose a designation', ''));
+  for (const designation of designationsByDepartment[departmentSelect.value] || []) {
+    designationSelect.add(new Option(designation, designation));
+  }
+});
+</script>
+{% endif %}
 {% endblock %}
