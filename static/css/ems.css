@@ -2,10 +2,10 @@
   color-scheme: dark;
   --bg: #0c0b27;
   --page-backdrop:
-    radial-gradient(ellipse at 12% 8%, rgba(255, 43, 214, .2), transparent 34%),
-    radial-gradient(ellipse at 86% 18%, rgba(0, 240, 255, .17), transparent 32%),
-    radial-gradient(ellipse at 52% 100%, rgba(116, 61, 255, .2), transparent 48%),
-    linear-gradient(135deg, #0c0b27 0%, #0a1a34 46%, #190b35 100%);
+    radial-gradient(ellipse at 12% 8%, rgba(255, 43, 214, .16), transparent 34%),
+    radial-gradient(ellipse at 86% 18%, rgba(0, 240, 255, .14), transparent 32%),
+    linear-gradient(135deg, rgba(8, 10, 35, .4), rgba(17, 7, 33, .48)),
+    url("../images/cyberpunk-city.png") center / cover no-repeat;
   --surface: #12112b;
   --surface-raised: #1a1740;
   --surface-soft: #15132f;
