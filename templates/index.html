@@ -1,112 +1,208 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="dashboard-card bg-white rounded-2xl p-4 sm:p-5 flex items-center justify-between gap-4">
-  <div>
-    <h2 class="font-semibold text-xl tracking-tight">Employee Dashboard</h2>
-    <p class="mt-1 text-sm text-mute">Your workforce overview at a glance</p>
-  </div>
-  <a href="{{ url_for('add') }}" class="group label bg-brand text-white rounded-xl px-4 sm:px-5 py-3 inline-flex items-center gap-2 hover:opacity-90 transition">Add employee <span class="transition-transform duration-300 group-hover:translate-x-1">{{ i.ic('arrow', 'w-4 h-4') }}</span></a>
-</div>
+<div class="page-content">
+  <section class="page-heading">
+    <div>
+      <p class="eyebrow">// WORKFORCE INTELLIGENCE</p>
+      <h1 class="page-title">Overview</h1>
+      <p class="page-description">Employee operations · live workforce snapshot</p>
+    </div>
+    <a href="{{ url_for('add') }}" class="btn btn-primary">{{ i.ic('plus', 'btn-icon') }} Add employee</a>
+  </section>
 
-{% set big = by_dept[0] if by_dept else none %}
-{% set avgpct = (avg / stats.m * 100) if stats.m else 0 %}
-{% set ringpct = (big.c / total * 100) if big and total else 0 %}
-<div class="grid xl:grid-cols-[1fr_20rem] gap-5">
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-    {% for icon, color, label, value in [('users','amber','Total employees', total), ('building','brand','Departments', stats.d), ('wallet','teal','Average salary', '₹{:,.0f}'.format(avg)), ('calendar','rose','Joined this year', stats.n or 0)] %}
-    <div class="dashboard-card bg-white rounded-2xl p-4 sm:p-5">
-      <div class="w-9 h-9 rounded-xl grid place-items-center text-white bg-{{ color }}">{{ i.ic(icon, 'w-5 h-5') }}</div>
-      <div class="label text-mute mt-4">{{ label }}</div>
-      <div class="font-light text-2xl tracking-tight mt-1">{{ value }}</div>
+  {% set big = by_dept[0] if by_dept else none %}
+  {% set avgpct = (avg / stats.m * 100) if stats.m else 0 %}
+  {% set ringpct = (big.c / total * 100) if big and total else 0 %}
+  {% set max_count = by_dept[0].c if by_dept else 0 %}
+  <section class="overview-layout" aria-label="Workforce overview">
+    <div class="stats-grid">
+      {% for icon, label, value in [
+        ('users', 'Total employees', total),
+        ('building', 'Departments', stats.d),
+        ('wallet', 'Average salary', '₹{:,.0f}'.format(avg)),
+        ('calendar', 'Joined this year', stats.n or 0)
+      ] %}
+      <article class="stat-card">
+        <div class="stat-icon">{{ i.ic(icon, 'stat-svg') }}</div>
+        <span class="stat-label">{{ label }}</span>
+        <strong class="stat-value">{{ value }}</strong>
+      </article>
+      {% endfor %}
     </div>
-    {% endfor %}
-  </div>
-  <div class="dashboard-card bg-white rounded-2xl p-4 sm:p-5">
-    <div class="label text-mute">Average vs highest salary</div>
-    <div class="relative mx-auto mt-3" style="width:200px;height:110px">
-      <svg viewBox="0 0 200 110" class="w-full"><path d="M20 100A80 80 0 0 1 180 100" fill="none" stroke="#E6E7F0" stroke-width="16" stroke-linecap="round"/>
-      <path d="M20 100A80 80 0 0 1 180 100" fill="none" stroke="#6D4AE8" stroke-width="16" stroke-linecap="round" pathLength="100" stroke-dasharray="{{ avgpct }} 100"/></svg>
-      <div class="absolute inset-x-0 bottom-0 text-center font-semibold text-2xl tracking-tight">₹{{ '{:,.0f}'.format(avg) }}</div>
-    </div>
-    <div class="label text-mute text-center mt-2">Average salary</div>
-    <div class="mt-3 pt-3 border-t border-line flex items-center justify-between gap-3">
-      <span class="label text-mute">Highest salary</span>
-      <span class="text-sm font-medium text-fg">₹{{ '{:,.0f}'.format(stats.m) }}</span>
-    </div>
-  </div>
-</div>
 
-<div class="grid lg:grid-cols-3 gap-5">
-  <div class="dashboard-card bg-white rounded-2xl p-5 sm:p-6">
-    <h2 class="font-light text-xl tracking-tight">Largest department</h2>
-    <div class="relative w-40 h-40 mx-auto mt-4">
-      <svg viewBox="0 0 100 100" class="w-full -rotate-90"><circle cx="50" cy="50" r="40" fill="none" stroke="#E6E7F0" stroke-width="10"/>
-      <circle cx="50" cy="50" r="40" fill="none" stroke="#22C3A6" stroke-width="10" stroke-linecap="round" pathLength="100" stroke-dasharray="{{ ringpct }} 100"/></svg>
-      <div class="absolute inset-0 grid place-items-center font-semibold text-3xl">{{ '%.0f'|format(ringpct) }}%</div>
-    </div>
-    <div class="label text-mute text-center mt-3">{{ big.department if big else 'No data' }}</div>
-  </div>
-  <div class="dashboard-card bg-white rounded-2xl p-5 sm:p-6">
-    <h2 class="font-light text-xl tracking-tight">Headcount by department</h2>
-    <div class="flex items-end gap-3 h-40 mt-6">
-      {% for d in by_dept %}
-      <div class="flex-1 flex flex-col items-center justify-end h-full gap-2">
-        <div class="text-xs text-mute">{{ d.c }}</div>
-        <div class="w-full rounded-t-lg {{ 'bg-amber' if loop.first else 'bg-brand' }}" style="height:{{ d.c / by_dept[0].c * 100 }}%"></div>
+    <section class="panel salary-panel" aria-label="Average and highest salary">
+      <p class="section-kicker">// SALARY INDEX</p>
+      <div class="salary-gauge">
+        <svg viewBox="0 0 200 110" role="img" aria-label="Average salary compared with highest salary">
+          <path d="M20 100A80 80 0 0 1 180 100" fill="none" stroke="var(--border)" stroke-width="16" stroke-linecap="round"/>
+          <path d="M20 100A80 80 0 0 1 180 100" fill="none" stroke="var(--magenta)" stroke-width="16" stroke-linecap="round" pathLength="100" stroke-dasharray="{{ avgpct }} 100"/>
+        </svg>
+        <div class="salary-gauge-value">₹{{ '{:,.0f}'.format(avg) }}</div>
       </div>
-      {% endfor %}
-    </div>
-    <div class="flex gap-3 mt-2">{% for d in by_dept %}<div class="flex-1 text-center text-[10px] text-mute truncate">{{ d.department }}</div>{% endfor %}</div>
-  </div>
-  <div class="dashboard-card bg-white rounded-2xl p-5 sm:p-6">
-    <h2 class="font-light text-xl tracking-tight">Top earners</h2>
-    <ul class="mt-4 space-y-4">
-      {% for t in top %}
-      <li class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full bg-brand/10 text-brand grid place-items-center text-sm font-medium">{{ t.name.split()|map('first')|join('')|upper }}</div>
-        <div class="flex-1 min-w-0"><div class="font-medium text-fg truncate">{{ t.name }}</div><div class="text-xs text-mute truncate">{{ t.designation }}</div></div>
-        <div class="text-sm font-medium text-teal">₹{{ '{:,.0f}'.format(t.salary) }}</div>
-      </li>
-      {% endfor %}
-    </ul>
-  </div>
-</div>
+      <p class="salary-gauge-caption">Average salary</p>
+      <div class="salary-highest"><span>Highest salary</span><strong>₹{{ '{:,.0f}'.format(stats.m) }}</strong></div>
+    </section>
+  </section>
 
-<div id="directory" class="dashboard-card bg-white rounded-2xl p-5 sm:p-6">
-  <h2 class="font-light text-xl tracking-tight">Directory</h2>
-  <form method="get" class="mt-5 flex flex-wrap gap-3">
-    <input name="q" value="{{ q }}" placeholder="Search name, email, phone, department or role" class="flex-1 min-w-[200px] border border-line rounded-xl px-4 py-3">
-    <select name="dept" class="border border-line rounded-xl px-4 py-3 bg-white"><option value="">All departments</option>{% for d in departments %}<option {{ 'selected' if d == dept }}>{{ d }}</option>{% endfor %}</select>
-    <select name="sort" class="border border-line rounded-xl px-4 py-3 bg-white">{% for k, l in [('name','Name'),('salary','Salary'),('joined','Newest'),('department','Department')] %}<option value="{{ k }}" {{ 'selected' if k == sort }}>Sort: {{ l }}</option>{% endfor %}</select>
-    <button class="label bg-fg text-white rounded-xl px-6 py-3 hover:bg-brand transition">Search</button>
-  </form>
-  <div class="mt-5 overflow-x-auto">
-    <table class="w-full min-w-[760px] text-left">
-      <thead><tr class="label text-mute border-b border-line"><th class="py-3 pr-6 font-medium">Name</th><th class="py-3 pr-6 font-medium">Department</th><th class="py-3 pr-6 font-medium">Role</th><th class="py-3 pr-6 font-medium">Salary</th><th class="py-3 pr-6 font-medium">Joined</th><th></th></tr></thead>
-      <tbody>
-      {% for e in rows %}
-      <tr class="border-b border-line hover:bg-bg transition">
-        <td class="py-4 pr-6"><a href="{{ url_for('employee_detail', emp_id=e.id) }}" class="font-medium text-fg hover:text-brand transition">{{ e.name }}</a><div class="text-mute text-sm">{{ e.email }}</div></td>
-        <td class="py-4 pr-6"><span class="text-xs font-medium bg-brand/10 text-brand rounded-full px-3 py-1">{{ e.department }}</span></td>
-        <td class="py-4 pr-6 text-mute">{{ e.designation }}</td>
-        <td class="py-4 pr-6 text-mute whitespace-nowrap">₹{{ '{:,.0f}'.format(e.salary) }}</td>
-        <td class="py-4 pr-6 text-mute whitespace-nowrap">{{ e.join_date }}</td>
-        <td class="py-4 text-right whitespace-nowrap">
-          <a href="{{ url_for('edit', emp_id=e.id) }}" class="label text-brand">Edit</a>
-          <form method="post" action="{{ url_for('delete', emp_id=e.id) }}" class="inline ml-4" onsubmit="return confirm('Delete {{ e.name|replace("'", "") }}? This cannot be undone.')"><button class="label text-mute hover:text-rose transition">Delete</button></form>
-        </td>
-      </tr>
+  <section class="dashboard-grid" aria-label="Department and earnings insights">
+    <section class="panel largest-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="section-kicker">// DEPARTMENT LEADER</p>
+          <h2 class="panel-title">Largest department</h2>
+        </div>
+      </div>
+      <div class="department-gauge">
+        <svg viewBox="0 0 100 100" role="img" aria-label="{{ '%.0f'|format(ringpct) }} percent of employees in {{ big.department if big else 'no department' }}">
+          <circle cx="50" cy="50" r="40" fill="none" stroke="var(--border)" stroke-width="10"/>
+          <circle cx="50" cy="50" r="40" fill="none" stroke="var(--green)" stroke-width="10" stroke-linecap="round" pathLength="100" stroke-dasharray="{{ ringpct }} 100"/>
+        </svg>
+        <div class="department-gauge-value">{{ '%.0f'|format(ringpct) }}%</div>
+      </div>
+      <p class="department-name">{{ big.department if big else 'No data' }}</p>
+    </section>
+
+    <section class="panel headcount-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="section-kicker">// TEAM DISTRIBUTION</p>
+          <h2 class="panel-title">Headcount by department</h2>
+        </div>
+      </div>
+      {% if by_dept %}
+      <div class="headcount-chart" aria-label="Department employee counts">
+        {% for d in by_dept %}
+        <div class="chart-item" aria-label="{{ d.department }}: {{ d.c }} employees">
+          <span class="chart-value">{{ d.c }}</span>
+          <div class="chart-bar-track"><div class="chart-bar" style="--bar-height:{{ (d.c / max_count * 100) if max_count else 0 }}%;--bar-index:{{ loop.index0 }};"></div></div>
+          <span class="chart-label" title="{{ d.department }}">{{ d.department }}</span>
+        </div>
+        {% endfor %}
+      </div>
       {% else %}
-      <tr><td colspan="6" class="py-12 text-center text-mute">No one matches that search. Clear the filters or <a class="text-brand underline" href="{{ url_for('add') }}">add an employee</a>.</td></tr>
+      <div class="empty-state"><strong>&gt; NO DEPARTMENT DATA</strong></div>
+      {% endif %}
+    </section>
+
+    <section class="panel earners-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="section-kicker">// PAYROLL LEADERS</p>
+          <h2 class="panel-title">Top earners</h2>
+        </div>
+      </div>
+      <ol class="earner-list">
+        {% for t in top %}
+        <li class="earner-item">
+          <span class="earner-rank">{{ '%02d'|format(loop.index) }}</span>
+          <span class="earner-avatar">{{ t.name.split()|map('first')|join('')|upper }}</span>
+          <span class="earner-copy"><span class="earner-name">{{ t.name }}</span><span class="earner-role">{{ t.designation }}</span></span>
+          <span class="earner-salary">₹{{ '{:,.0f}'.format(t.salary) }}</span>
+        </li>
+        {% else %}
+        <li class="empty-state"><strong>&gt; NO EARNER DATA</strong></li>
+        {% endfor %}
+      </ol>
+    </section>
+  </section>
+
+  <section id="directory" class="panel directory-panel" aria-labelledby="directory-title">
+    <div class="directory-heading">
+      <div class="panel-heading">
+        <div>
+          <p class="section-kicker">// PERSONNEL DATABASE</p>
+          <h2 id="directory-title" class="panel-title">Employee directory</h2>
+        </div>
+        <span class="section-kicker">{{ found }} RECORDS</span>
+      </div>
+    </div>
+    <form method="get" class="directory-controls" role="search">
+      <label class="sr-only" for="employee-search">Search employees</label>
+      <input id="employee-search" name="q" value="{{ q }}" placeholder="Search name, email, phone, department or role" class="field-control search-control" type="search">
+      <label class="sr-only" for="department-filter">Filter by department</label>
+      <select id="department-filter" name="dept" class="field-control filter-control">
+        <option value="">All departments</option>
+        {% for d in departments %}<option value="{{ d }}" {{ 'selected' if d == dept }}>{{ d }}</option>{% endfor %}
+      </select>
+      <label class="sr-only" for="employee-sort">Sort employees</label>
+      <select id="employee-sort" name="sort" class="field-control filter-control">
+        {% for k, l in [('name','Name'),('salary','Salary'),('joined','Newest'),('department','Department')] %}
+        <option value="{{ k }}" {{ 'selected' if k == sort }}>Sort: {{ l }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-primary search-button" type="submit">{{ i.ic('search', 'btn-icon') }} Search</button>
+    </form>
+
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th scope="col">Employee</th><th scope="col">Department</th><th scope="col">Role</th><th scope="col">Salary</th><th scope="col">Joined</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead>
+        <tbody>
+        {% for e in rows %}
+        <tr>
+          <td><a href="{{ url_for('employee_detail', emp_id=e.id) }}" class="employee-link">{{ e.name }}</a><div class="employee-email">{{ e.email }}</div></td>
+          <td><span class="department-tag">{{ e.department }}</span></td>
+          <td>{{ e.designation }}</td>
+          <td class="table-salary">₹{{ '{:,.0f}'.format(e.salary) }}</td>
+          <td class="table-date">{{ e.join_date }}</td>
+          <td>
+            <div class="row-actions">
+              <a href="{{ url_for('edit', emp_id=e.id) }}" class="text-action">Edit</a>
+              <form method="post" action="{{ url_for('delete', emp_id=e.id) }}" class="delete-form">
+                <button class="btn btn-danger btn-small" type="submit">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="empty-state"><strong>&gt; NO RECORDS FOUND</strong>Clear the filters or <a class="text-action" href="{{ url_for('add') }}">add an employee</a>.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if pages > 1 %}
+    <nav class="pagination" aria-label="Directory pages">
+      {% for p in range(1, pages + 1) %}
+      <a href="{{ url_for('index', q=q, dept=dept, sort=sort, page=p) }}" class="page-link {{ 'is-current' if p == page }}" {{ 'aria-current=page' if p == page }}>{{ p }}</a>
       {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  {% if pages > 1 %}
-  <div class="mt-6 flex items-center gap-2">
-    {% for p in range(1, pages + 1) %}<a href="{{ url_for('index', q=q, dept=dept, sort=sort, page=p) }}" class="label w-10 h-10 grid place-items-center rounded-xl {{ 'bg-brand text-white' if p == page else 'bg-bg hover:bg-line' }} transition">{{ p }}</a>{% endfor %}
-    <span class="label text-mute ml-3">{{ found }} results</span>
-  </div>
-  {% endif %}
+      <span class="pagination-count">{{ found }} results</span>
+    </nav>
+    {% endif %}
+  </section>
+
+  <dialog id="delete-confirmation" class="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-description">
+    <div class="confirm-content">
+      <p class="section-kicker">// DESTRUCTIVE ACTION</p>
+      <h2 id="confirm-title" class="confirm-title">CONFIRM DELETION</h2>
+      <p id="confirm-description" class="confirm-copy">This employee record will be permanently deleted. This action cannot be undone.</p>
+      <div class="confirm-actions">
+        <button id="cancel-delete" class="btn btn-neutral" type="button">Cancel</button>
+        <button id="confirm-delete" class="btn btn-danger" type="button">Delete employee</button>
+      </div>
+    </div>
+  </dialog>
 </div>
+<script>
+const deleteDialog = document.getElementById('delete-confirmation');
+let pendingDeleteForm = null;
+document.querySelectorAll('.delete-form').forEach((form) => {
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    pendingDeleteForm = form;
+    deleteDialog.showModal();
+  });
+});
+document.getElementById('cancel-delete').addEventListener('click', () => {
+  pendingDeleteForm = null;
+  deleteDialog.close();
+});
+document.getElementById('confirm-delete').addEventListener('click', () => {
+  if (pendingDeleteForm) pendingDeleteForm.submit();
+});
+deleteDialog.addEventListener('click', (event) => {
+  if (event.target === deleteDialog) {
+    pendingDeleteForm = null;
+    deleteDialog.close();
+  }
+});
+</script>
 {% endblock %}
