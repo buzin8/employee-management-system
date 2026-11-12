@@ -239,11 +239,12 @@ def delete(emp_id):
 
 @app.route("/export.csv")
 def export():
-    rows = execute("SELECT id,name,email,phone,department,designation,salary,join_date FROM employees ORDER BY name").fetchall()
+    fields = ["id", "name", "email", "phone", "department", "designation", "salary", "join_date"]
+    rows = execute(f"SELECT {','.join(fields)} FROM employees ORDER BY name").fetchall()
     out = io.StringIO()
     w = csv.writer(out)
-    w.writerow(rows[0].keys() if rows else ["id", "name", "email", "phone", "department", "designation", "salary", "join_date"])
-    w.writerows([tuple(r) for r in rows])
+    w.writerow(fields)
+    w.writerows([[row[field] for field in fields] for row in rows])
     return Response(out.getvalue(), mimetype="text/csv", headers={"Content-Disposition": "attachment; filename=employees.csv"})
 
 
