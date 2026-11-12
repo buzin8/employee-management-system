@@ -153,6 +153,17 @@ def validate(form, emp_id=None):
         row = execute(duplicate_query, duplicate_params).fetchone()
         if row:
             errors.append("Another employee already uses this email.")
+    if data["phone"] and re.fullmatch(r"[0-9+\-\s]{7,15}", data["phone"]):
+        phone_digits = re.sub(r"\D", "", data["phone"])
+        existing_phones = execute(
+            "SELECT id, phone FROM employees WHERE phone IS NOT NULL AND phone != ''"
+        ).fetchall()
+        if any(
+            row["id"] != emp_id
+            and re.sub(r"\D", "", row["phone"]) == phone_digits
+            for row in existing_phones
+        ):
+            errors.append("Another employee already uses this phone number.")
     return data, errors
 
 
