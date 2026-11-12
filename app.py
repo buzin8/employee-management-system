@@ -164,7 +164,7 @@ def index():
     page = max(int(request.args.get("page", 1) or 1), 1)
     where, args = [], []
     if q:
-        where.append("(name LIKE ? OR email LIKE ? OR phone LIKE ? OR department LIKE ? OR designation LIKE ?)")
+        where.append("(LOWER(name) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?) OR LOWER(phone) LIKE LOWER(?) OR LOWER(department) LIKE LOWER(?) OR LOWER(designation) LIKE LOWER(?))")
         args += [f"%{q}%"] * 5
     if dept:
         where.append("department = ?")
