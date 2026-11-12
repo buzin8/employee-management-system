@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ employee.name }}{% endblock %}
+{% block content %}
+<div class="flex flex-wrap items-center justify-between gap-3">
+  <a href="{{ url_for('index') }}#directory" class="label text-brand hover:opacity-75 transition">← Back to directory</a>
+  <a href="{{ url_for('edit', emp_id=employee.id) }}" class="label bg-brand text-white rounded-xl px-5 py-3 hover:opacity-90 transition">Edit employee</a>
+</div>
+<section class="dashboard-card bg-white rounded-2xl overflow-hidden max-w-3xl">
+  <div class="bg-brand/5 p-5 sm:p-8 flex items-center gap-4">
+    <div class="w-16 h-16 rounded-2xl bg-brand/10 text-brand grid place-items-center text-xl font-semibold">
+      {{ employee.name.split()|map('first')|join('')|upper }}
+    </div>
+    <div class="min-w-0">
+      <p class="label text-mute">Employee profile · #{{ employee.id }}</p>
+      <h2 class="mt-1 text-2xl font-semibold tracking-tight text-fg">{{ employee.name }}</h2>
+      <p class="mt-1 text-sm text-mute">{{ employee.designation }} · {{ employee.department }}</p>
+    </div>
+  </div>
+  <dl class="grid sm:grid-cols-2 gap-x-8 gap-y-6 p-5 sm:p-8">
+    <div><dt class="label text-mute">Email</dt><dd class="mt-2 break-all text-fg">{{ employee.email }}</dd></div>
+    <div><dt class="label text-mute">Phone</dt><dd class="mt-2 text-fg">{{ employee.phone or 'Not provided' }}</dd></div>
+    <div><dt class="label text-mute">Department</dt><dd class="mt-2 text-fg">{{ employee.department }}</dd></div>
+    <div><dt class="label text-mute">Designation</dt><dd class="mt-2 text-fg">{{ employee.designation }}</dd></div>
+    <div><dt class="label text-mute">Annual salary</dt><dd class="mt-2 text-fg">₹{{ '{:,.0f}'.format(employee.salary) }}</dd></div>
+    <div><dt class="label text-mute">Join date</dt><dd class="mt-2 text-fg">{{ employee.join_date }}</dd></div>
+  </dl>
+</section>
+{% endblock %}

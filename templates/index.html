@@ -86,7 +86,7 @@
       <tbody>
       {% for e in rows %}
       <tr class="border-b border-line hover:bg-bg transition">
-        <td class="py-4 pr-6"><div class="font-medium text-fg">{{ e.name }}</div><div class="text-mute text-sm">{{ e.email }}</div></td>
+        <td class="py-4 pr-6"><a href="{{ url_for('employee_detail', emp_id=e.id) }}" class="font-medium text-fg hover:text-brand transition">{{ e.name }}</a><div class="text-mute text-sm">{{ e.email }}</div></td>
         <td class="py-4 pr-6"><span class="text-xs font-medium bg-brand/10 text-brand rounded-full px-3 py-1">{{ e.department }}</span></td>
         <td class="py-4 pr-6 text-mute">{{ e.designation }}</td>
         <td class="py-4 pr-6 text-mute whitespace-nowrap">₹{{ '{:,.0f}'.format(e.salary) }}</td>

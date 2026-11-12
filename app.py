@@ -195,6 +195,14 @@ def index():
                            found=total_found, total=stats["c"], avg=stats["a"], stats=stats, top=top, by_dept=by_dept, departments=DEPARTMENTS)
 
 
+@app.route("/employee/<int:emp_id>")
+def employee_detail(emp_id):
+    employee = execute("SELECT * FROM employees WHERE id=?", (emp_id,)).fetchone()
+    if not employee:
+        abort(404)
+    return render_template("employee.html", employee=employee)
+
+
 @app.route("/add", methods=["GET", "POST"])
 def add():
     data = {}
