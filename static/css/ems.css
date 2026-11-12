@@ -28,11 +28,13 @@
 html.light {
   color-scheme: light;
   --bg: #edf5f7;
-  --page-backdrop: var(--bg);
-  --surface: #ffffff;
-  --surface-raised: #f2fbfc;
-  --surface-soft: #e7f2f4;
-  --border: #b7cbd0;
+  --page-backdrop:
+    linear-gradient(180deg, rgba(250, 253, 255, .4), rgba(245, 250, 255, .48)),
+    url("../images/daylight-office.png") center / cover no-repeat fixed;
+  --surface: rgba(255, 255, 255, .82);
+  --surface-raised: rgba(245, 249, 252, .84);
+  --surface-soft: rgba(232, 239, 244, .82);
+  --border: rgba(130, 151, 164, .8);
   --border-bright: rgba(0, 112, 124, .55);
   --cyan: #006f7a;
   --magenta: #a90078;
@@ -43,6 +45,17 @@ html.light {
   --muted: #455e68;
   --glow-cyan: 0 0 12px rgba(0, 112, 124, .12);
   --glow-magenta: 0 0 12px rgba(169, 0, 120, .1);
+}
+
+html.light body::before {
+  background-image:
+    linear-gradient(rgba(0, 114, 128, .07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 114, 128, .06) 1px, transparent 1px);
+  opacity: .75;
+}
+
+html.light body::after {
+  background: repeating-linear-gradient(to bottom, transparent 0 3px, rgba(14, 50, 72, .04) 4px);
 }
 
 * { box-sizing: border-box; }
