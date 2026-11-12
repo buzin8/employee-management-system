@@ -4,11 +4,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#070711">
+<meta name="theme-color" content="#0c0b27">
 <title>{% block title %}Employee Dashboard{% endblock %} · Infotech Limited</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <script>
 if (localStorage.getItem('ems-theme') === 'light') document.documentElement.classList.add('light');
 </script>
@@ -18,8 +18,7 @@ if (localStorage.getItem('ems-theme') === 'light') document.documentElement.clas
 <div class="site-frame">
   <header class="topbar">
     <a href="{{ url_for('index') }}" class="brand-mark" aria-label="Infotech dashboard">
-      <span class="brand-chip">IF</span>
-      <span class="brand-word">INFOTECH<span class="brand-slashes">//</span></span>
+      <img src="{{ url_for('static', filename='images/infotech-logo.png') }}" class="brand-logo" alt="Infotech — Brilliantly Built">
     </a>
     <nav class="primary-nav" aria-label="Primary navigation">
       <a href="{{ url_for('index') }}" class="nav-link {{ 'is-active' if request.endpoint == 'index' }}" {{ 'aria-current=page' if request.endpoint == 'index' }}>

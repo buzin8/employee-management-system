@@ -35,7 +35,7 @@
       <div class="salary-gauge">
         <svg viewBox="0 0 200 110" role="img" aria-label="Average salary compared with highest salary">
           <path d="M20 100A80 80 0 0 1 180 100" fill="none" stroke="var(--border)" stroke-width="16" stroke-linecap="round"/>
-          <path d="M20 100A80 80 0 0 1 180 100" fill="none" stroke="var(--magenta)" stroke-width="16" stroke-linecap="round" pathLength="100" stroke-dasharray="{{ avgpct }} 100"/>
+          <path d="M20 100A80 80 0 0 1 180 100" fill="none" stroke="var(--cyan)" stroke-width="16" stroke-linecap="round" pathLength="100" stroke-dasharray="{{ avgpct }} 100"/>
         </svg>
         <div class="salary-gauge-value">₹{{ '{:,.0f}'.format(avg) }}</div>
       </div>
@@ -55,7 +55,7 @@
       <div class="department-gauge">
         <svg viewBox="0 0 100 100" role="img" aria-label="{{ '%.0f'|format(ringpct) }} percent of employees in {{ big.department if big else 'no department' }}">
           <circle cx="50" cy="50" r="40" fill="none" stroke="var(--border)" stroke-width="10"/>
-          <circle cx="50" cy="50" r="40" fill="none" stroke="var(--green)" stroke-width="10" stroke-linecap="round" pathLength="100" stroke-dasharray="{{ ringpct }} 100"/>
+          <circle cx="50" cy="50" r="40" fill="none" stroke="var(--cyan)" stroke-width="10" stroke-linecap="round" pathLength="100" stroke-dasharray="{{ ringpct }} 100"/>
         </svg>
         <div class="department-gauge-value">{{ '%.0f'|format(ringpct) }}%</div>
       </div>
